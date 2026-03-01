@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vigil — Solana Airdrop Tracker, Whale Watcher & Token Scanner</title>
+  <meta name="description" content="Track Solana airdrops, watch whale wallets, scan tokens for safety, and manage your portfolio. Non-custodial, no sign-up required. Built for Solana Seeker.">
+  <meta name="theme-color" content="#9945FF">
+  <link rel="canonical" href="https://vigilapp.io/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Vigil — Solana Airdrop Tracker, Whale Watcher & Token Scanner">
+  <meta property="og:description" content="Track Solana airdrops, watch whale wallets, scan tokens for safety, and manage your portfolio. Non-custodial, no sign-up required.">
+  <meta property="og:url" content="https://vigilapp.io/">
+  <meta property="og:image" content="https://vigilapp.io/og-image.png">
+  <meta property="og:site_name" content="Vigil">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Vigil — Solana Airdrop Tracker, Whale Watcher & Token Scanner">
+  <meta name="twitter:description" content="Track Solana airdrops, watch whale wallets, scan tokens for safety, and manage your portfolio. Non-custodial, no sign-up required.">
+  <meta name="twitter:image" content="https://vigilapp.io/og-image.png">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Vigil",
+    "operatingSystem": "Android",
+    "applicationCategory": "FinanceApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": {
+      "@type": "Organization",
+      "name": "Vigil",
+      "address": { "@type": "PostalAddress", "addressRegion": "SC", "addressCountry": "US" }
+    },
+    "description": "Solana airdrop tracker, whale wallet watcher, token scanner, and portfolio manager. Non-custodial, no sign-up required."
+  }
+  </script>
+
+  <!-- Inline SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230a0a0f' stroke='%239945FF' stroke-width='1.5'/%3E%3Cellipse cx='16' cy='16' rx='10' ry='6' fill='none' stroke='%239945FF' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%239945FF'/%3E%3C/svg%3E">
+
+  <style>
+    /* ===== Custom Properties ===== */
+    :root {
+      --bg: #0a0a0f;
+      --card: #121218;
+      --card-hover: #1a1a24;
+      --border: #27272a;
+      --accent: #9945FF;
+      --accent-dim: #7c35d9;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --text-primary: #e4e4e7;
+      --text-secondary: #a1a1aa;
+      --text-tertiary: #52525b;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* ===== Reset ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== Focus ===== */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ===== Navigation ===== */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom-color: var(--border);
+      box-shadow: 0 1px 24px rgba(0,0,0,0.3);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 20px; font-weight: 700; color: var(--text-primary);
+      text-decoration: none;
+    }
+    .nav-logo:hover { text-decoration: none; }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-links {
+      display: flex; align-items: center; gap: 24px;
+      margin-left: auto; list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-secondary); font-size: 14px; font-weight: 500;
+      transition: color 0.2s; text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--text-primary); text-decoration: none; }
+    .nav-cta {
+      margin-left: 24px; padding: 8px 20px; border-radius: 8px;
+      background: var(--accent); color: #fff !important; font-size: 14px;
+      font-weight: 600; transition: all 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-dim); text-decoration: none !important; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      margin-left: auto; padding: 8px; color: var(--text-primary);
+    }
+
+    /* Mobile menu overlay */
+    .mobile-menu {
+      display: none; position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px 24px; z-index: 99;
+      transform: translateY(-10px); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+    }
+    .mobile-menu.open { display: flex; flex-direction: column; gap: 4px; transform: translateY(0); opacity: 1; }
+    .mobile-menu a {
+      display: block; padding: 12px 16px; border-radius: 8px;
+      color: var(--text-secondary); font-size: 15px; font-weight: 500;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .mobile-menu a:hover { background: var(--card); color: var(--text-primary); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; }
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      padding: 140px 0 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ""; position: absolute; top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(153,69,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 20px;
+      background: rgba(153,69,255,0.1); border: 1px solid rgba(153,69,255,0.25);
+      font-size: 13px; font-weight: 600; color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 48px; line-height: 1.15; font-weight: 800;
+      margin-bottom: 20px; letter-spacing: -0.02em;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent), #14F195);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 17px; color: var(--text-secondary); line-height: 1.7;
+      margin-bottom: 32px; max-width: 480px;
+    }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 12px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; border: none; text-decoration: none;
+    }
+    .btn:hover { text-decoration: none; }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 0 32px rgba(153,69,255,0.3);
+    }
+    .btn-primary:hover { background: var(--accent-dim); transform: translateY(-1px); }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-outline {
+      background: transparent; color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--text-tertiary); transform: translateY(-1px); }
+    .btn-outline:active { transform: scale(0.98); }
+
+    /* CSS Phone Mockup */
+    .phone-wrap { display: flex; justify-content: center; }
+    .phone {
+      width: 280px; height: 560px;
+      background: var(--card); border: 2px solid var(--border);
+      border-radius: 36px; position: relative; overflow: hidden;
+      box-shadow: 0 0 60px rgba(153,69,255,0.1), 0 20px 60px rgba(0,0,0,0.4);
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .phone-notch {
+      width: 100px; height: 28px; background: var(--bg);
+      border-radius: 0 0 16px 16px; margin: 0 auto;
+      position: relative; z-index: 2;
+    }
+    .phone-status {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 20px 0; font-size: 11px; color: var(--text-tertiary);
+      font-weight: 600;
+    }
+    .phone-header {
+      padding: 12px 20px 8px; font-size: 18px; font-weight: 700;
+      color: var(--accent);
+    }
+    .phone-pills {
+      display: flex; gap: 6px; padding: 0 20px 12px;
+    }
+    .phone-pill {
+      padding: 5px 12px; border-radius: 14px;
+      font-size: 11px; font-weight: 600;
+    }
+    .phone-pill.active { background: var(--accent); color: #fff; }
+    .phone-pill.inactive { background: transparent; color: var(--text-tertiary); }
+    .phone-card {
+      margin: 0 12px 8px; padding: 12px 14px;
+      background: var(--bg); border-radius: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .phone-token-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .phone-token-info { flex: 1; min-width: 0; }
+    .phone-token-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .phone-token-pair { font-size: 10px; color: var(--text-tertiary); }
+    .phone-token-price { text-align: right; }
+    .phone-token-usd { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+    .phone-token-change { font-size: 11px; font-weight: 600; }
+    .phone-tabs {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 10px 0 20px; background: var(--card);
+      border-top: 1px solid var(--border);
+    }
+    .phone-tab { text-align: center; }
+    .phone-tab-icon { font-size: 16px; margin-bottom: 2px; }
+    .phone-tab-label { font-size: 9px; font-weight: 500; }
+    .phone-tab.active .phone-tab-icon,
+    .phone-tab.active .phone-tab-label { color: var(--accent); }
+    .phone-tab:not(.active) .phone-tab-icon,
+    .phone-tab:not(.active) .phone-tab-label { color: var(--text-tertiary); }
+
+    @media (max-width: 768px) {
+      .hero { padding: 110px 0 48px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+      .hero h1 { font-size: 34px; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .phone { width: 240px; height: 480px; }
+      .phone-header { font-size: 16px; }
+    }
+
+    /* ===== Section Shared ===== */
+    section { padding: 80px 0; }
+    .section-label {
+      display: inline-block; font-size: 13px; font-weight: 600;
+      color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 36px; font-weight: 800; margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .section-desc {
+      font-size: 16px; color: var(--text-secondary);
+      max-width: 560px; margin-bottom: 48px;
+    }
+    .section-desc.centered { margin-left: auto; margin-right: auto; text-align: center; }
+    .section-title.centered { text-align: center; }
+    .section-label.centered { display: block; text-align: center; }
+
+    @media (max-width: 768px) {
+      section { padding: 56px 0; }
+      .section-title { font-size: 28px; }
+    }
+
+    /* ===== Features Bento ===== */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .bento-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      transition: all 0.3s;
+    }
+    .bento-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      background: var(--card-hover);
+    }
+    .bento-card:first-child { grid-column: span 2; }
+    .bento-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      background: rgba(153,69,255,0.1);
+    }
+    .bento-icon svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .bento-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .bento-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Mini mockup inside whale card */
+    .mini-feed { margin-top: 16px; }
+    .mini-feed-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 8px;
+      background: var(--bg); margin-bottom: 6px; font-size: 12px;
+    }
+    .mini-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .mini-feed-text { color: var(--text-secondary); flex: 1; }
+    .mini-feed-time { color: var(--text-tertiary); font-size: 11px; white-space: nowrap; }
+
+    /* Mini mockups in other cards */
+    .mini-pills { display: flex; gap: 6px; margin-top: 12px; }
+    .mini-pill { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .mini-pill.active { background: var(--accent); color: #fff; }
+    .mini-pill.dim { background: rgba(255,255,255,0.05); color: var(--text-tertiary); }
+
+    .mini-progress { margin-top: 16px; }
+    .mini-progress-bar {
+      height: 8px; border-radius: 4px; background: var(--bg); overflow: hidden;
+    }
+    .mini-progress-fill {
+      height: 100%; width: 57%; border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), #14F195);
+    }
+    .mini-progress-label { font-size: 12px; color: var(--text-tertiary); margin-top: 6px; }
+
+    .mini-balance { margin-top: 12px; }
+    .mini-usd { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+    .mini-pnl { font-size: 14px; font-weight: 600; color: var(--success); margin-top: 2px; }
+
+    .mini-score { margin-top: 16px; display: flex; align-items: center; gap: 16px; }
+    .score-circle {
+      width: 56px; height: 56px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center;
+      border: 3px solid var(--success); font-size: 20px; font-weight: 800;
+      color: var(--success); flex-shrink: 0;
+    }
+    .score-label { font-size: 12px; color: var(--text-tertiary); }
+    .score-detail { font-size: 14px; font-weight: 600; color: var(--success); }
+
+    @media (max-width: 1024px) {
+      .bento { grid-template-columns: repeat(2, 1fr); }
+      .bento-card:first-child { grid-column: span 2; }
+    }
+    @media (max-width: 640px) {
+      .bento { grid-template-columns: 1fr; }
+      .bento-card:first-child { grid-column: span 1; }
+    }
+
+    /* ===== How It Works ===== */
+    .steps {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 32px; position: relative;
+    }
+    .steps::before {
+      content: ""; position: absolute; top: 36px; left: calc(16.67% + 36px);
+      width: calc(66.66% - 72px); height: 0;
+      border-top: 2px dashed var(--border);
+    }
+    .step { text-align: center; }
+    .step-num {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 28px; font-weight: 800;
+      color: var(--accent); border: 2px solid var(--accent);
+      background: var(--bg); position: relative;
+      box-shadow: 0 0 24px rgba(153,69,255,0.15);
+    }
+    .step h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 14px; color: var(--text-secondary); max-width: 260px; margin: 0 auto; }
+
+    @media (max-width: 768px) {
+      .steps { grid-template-columns: 1fr; gap: 40px; }
+      .steps::before { display: none; }
+    }
+
+    /* ===== Security ===== */
+    .trust-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .trust-card {
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      border-radius: 12px; padding: 24px;
+    }
+    .trust-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .trust-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+    @media (max-width: 640px) {
+      .trust-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== FAQ ===== */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    details {
+      border: 1px solid var(--border); border-radius: 12px;
+      margin-bottom: 8px; overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    details[open] { border-color: rgba(153,69,255,0.3); }
+    summary {
+      padding: 18px 24px; font-size: 15px; font-weight: 600;
+      cursor: pointer; list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--text-primary); transition: color 0.2s;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: "+"; font-size: 20px; font-weight: 400;
+      color: var(--text-tertiary); transition: transform 0.2s;
+    }
+    details[open] summary::after { content: "\2212"; }
+    details .faq-body {
+      padding: 0 24px 20px; font-size: 14px;
+      color: var(--text-secondary); line-height: 1.7;
+    }
+
+    /* ===== Download CTA ===== */
+    .cta-section { padding: 80px 0; }
+    .cta-card {
+      border-radius: 20px; padding: 56px 48px; text-align: center;
+      background: linear-gradient(135deg, rgba(153,69,255,0.15), rgba(20,241,149,0.08));
+      border: 1px solid rgba(153,69,255,0.2);
+    }
+    .cta-card h2 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+    .cta-card p { font-size: 16px; color: var(--text-secondary); margin-bottom: 32px; }
+    .cta-card .hero-ctas { justify-content: center; }
+    .cta-note { font-size: 13px; color: var(--text-tertiary); margin-top: 20px; }
+
+    @media (max-width: 640px) {
+      .cta-card { padding: 40px 24px; }
+      .cta-card h2 { font-size: 24px; }
+    }
+
+    /* ===== Legal Sections ===== */
+    .legal-section {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+    .legal-inner { max-width: 720px; margin: 0 auto; }
+    .legal-inner h2 {
+      font-size: 28px; font-weight: 800; margin-bottom: 8px;
+    }
+    .legal-effective {
+      font-size: 13px; color: var(--text-tertiary); margin-bottom: 32px;
+    }
+    .legal-inner h3 {
+      font-size: 17px; font-weight: 700; margin: 32px 0 10px;
+      color: var(--text-primary);
+    }
+    .legal-inner p {
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;
+      line-height: 1.7;
+    }
+    .legal-inner ul, .legal-inner ol { padding-left: 24px; margin-bottom: 12px; }
+    .legal-inner li {
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;
+      line-height: 1.7;
+    }
+    .legal-inner table {
+      width: 100%; border-collapse: collapse; margin: 16px 0;
+    }
+    .legal-inner th, .legal-inner td {
+      text-align: left; padding: 10px 12px; font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    .legal-inner th { color: var(--text-tertiary); font-weight: 500; }
+    .legal-inner td { color: var(--text-secondary); }
+    .legal-badge {
+      display: inline-block; background: rgba(153,69,255,0.1);
+      color: var(--accent); font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 16px; margin-bottom: 16px;
+    }
+    .legal-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px; margin: 16px 0;
+    }
+    .legal-card p:last-child { margin-bottom: 0; }
+    .legal-contact {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; text-align: center; margin-top: 32px;
+    }
+
+    /* ===== Footer ===== */
+    .site-footer {
+      border-top: 1px solid var(--border); padding: 48px 0 32px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px; margin-bottom: 32px;
+    }
+    .footer-brand p { font-size: 14px; color: var(--text-secondary); margin-top: 8px; max-width: 280px; }
+    .footer-col h4 { font-size: 13px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text-primary); text-decoration: none; }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 24px; border-top: 1px solid var(--border);
+    }
+    .footer-copy { font-size: 12px; color: var(--text-tertiary); }
+    .footer-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text-tertiary); font-weight: 500;
+    }
+    .footer-badge svg { width: 14px; height: 14px; }
+
+    @media (max-width: 640px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; }
+    }
+
+    /* ===== Scroll Reveal ===== */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .phone { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navigation ===== -->
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" aria-label="Vigil home">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="15" stroke="#9945FF" stroke-width="1.5"/>
+          <ellipse cx="16" cy="16" rx="10" ry="6" stroke="#9945FF" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="3" fill="#9945FF"/>
+        </svg>
+        Vigil
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="#terms">Terms</a></li>
+        <li><a href="#download" class="nav-cta">Download</a></li>
+      </ul>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mobile-menu" role="menu">
+      <a href="#features" role="menuitem">Features</a>
+      <a href="#how-it-works" role="menuitem">How It Works</a>
+      <a href="#security" role="menuitem">Security</a>
+      <a href="#faq" role="menuitem">FAQ</a>
+      <a href="#privacy" role="menuitem">Privacy</a>
+      <a href="#terms" role="menuitem">Terms</a>
+      <a href="#download" role="menuitem">Download</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="hero">
+      <div class="container">
+        <div class="hero-inner">
+          <div class="reveal">
+            <div class="hero-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Built on Solana
+            </div>
+            <h1>Your Solana<br><span class="gradient-text">Command Center</span></h1>
+            <p class="hero-sub">Track airdrops, watch whale wallets in real time, scan tokens for safety, and manage your portfolio &mdash; all in one app. Non-custodial, no sign-up required.</p>
+            <div class="hero-ctas">
+              <a href="#download" class="btn btn-primary">Get on Solana dApp Store</a>
+              <a href="#download" class="btn btn-outline">Download APK</a>
+            </div>
+          </div>
+          <div class="phone-wrap reveal reveal-delay-2">
+            <div class="phone">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span>9:41</span>
+                <span>LTE</span>
+              </div>
+              <div class="phone-header">Vigil</div>
+              <div class="phone-pills">
+                <span class="phone-pill active">Trending</span>
+                <span class="phone-pill inactive">Newest</span>
+                <span class="phone-pill inactive">Volume</span>
+              </div>
+              <div class="phone-card">
+                <div class="phone-token-icon" style="background:linear-gradient(135deg,#9945FF,#14F195)">S</div>
+                <div class="phone-token-info">
+                  <div class="phone-token-name">SOL</div>
+                  <div class="phone-token-pair">SOL/USDC</div>
+                </div>
+                <div class="phone-token-price">
+                  <div class="phone-token-usd">$148.32</div>
+                  <div class="phone-token-change" style="color:var(--success)">+5.2%</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-token-icon" style="background:#f59e0b">B</div>
+                <div class="phone-token-info">
+                  <div class="phone-token-name">BONK</div>
+                  <div class="phone-token-pair">BONK/SOL</div>
+                </div>
+                <div class="phone-token-price">
+                  <div class="phone-token-usd">$0.00002</div>
+                  <div class="phone-token-change" style="color:var(--error)">-2.1%</div>
+                </div>
+              </div>
+              <div class="phone-card">
+                <div class="phone-token-icon" style="background:linear-gradient(135deg,#7c35d9,#14F195)">J</div>
+                <div class="phone-token-info">
+                  <div class="phone-token-name">JUP</div>
+                  <div class="phone-token-pair">JUP/USDC</div>
+                </div>
+                <div class="phone-token-price">
+                  <div class="phone-token-usd">$0.87</div>
+                  <div class="phone-token-change" style="color:var(--success)">+1.8%</div>
+                </div>
+              </div>
+              <div class="phone-tabs">
+                <div class="phone-tab active">
+                  <div class="phone-tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+                  </div>
+                  <div class="phone-tab-label">Feed</div>
+                </div>
+                <div class="phone-tab">
+                  <div class="phone-tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </div>
+                  <div class="phone-tab-label">Wallets</div>
+                </div>
+                <div class="phone-tab">
+                  <div class="phone-tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><polyline points="12 3 12 15"/><polyline points="8 7 12 3 16 7"/></svg>
+                  </div>
+                  <div class="phone-tab-label">Airdrops</div>
+                </div>
+                <div class="phone-tab">
+                  <div class="phone-tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                  </div>
+                  <div class="phone-tab-label">Portfolio</div>
+                </div>
+                <div class="phone-tab">
+                  <div class="phone-tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="4 3"/></svg>
+                  </div>
+                  <div class="phone-tab-label">Settings</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Features ===== -->
+    <section id="features">
+      <div class="container">
+        <div class="section-label reveal">Features</div>
+        <h2 class="section-title reveal">Everything you need on Solana</h2>
+        <p class="section-desc reveal">Five powerful tools in one lightweight app. No bloat, no tracking, no compromises.</p>
+
+        <div class="bento">
+          <!-- Whale Watcher (large) -->
+          <div class="bento-card reveal">
+            <div class="bento-icon">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <h3>Whale Wallet Watcher</h3>
+            <p>Monitor any public Solana wallet in real time. Get alerts when whales move tokens, swap positions, or interact with new protocols.</p>
+            <div class="mini-feed">
+              <div class="mini-feed-item">
+                <div class="mini-dot" style="background:var(--success)"></div>
+                <span class="mini-feed-text"><strong>Whale.sol</strong> bought 2.4M BONK</span>
+                <span class="mini-feed-time">2m ago</span>
+              </div>
+              <div class="mini-feed-item">
+                <div class="mini-dot" style="background:var(--error)"></div>
+                <span class="mini-feed-text"><strong>DeFi_OG</strong> sold 12K JUP</span>
+                <span class="mini-feed-time">8m ago</span>
+              </div>
+              <div class="mini-feed-item">
+                <div class="mini-dot" style="background:var(--accent)"></div>
+                <span class="mini-feed-text"><strong>Alpha.sol</strong> received airdrop</span>
+                <span class="mini-feed-time">15m ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Token Feed -->
+          <div class="bento-card reveal reveal-delay-1">
+            <div class="bento-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>
+            </div>
+            <h3>Live Token Feed</h3>
+            <p>Trending, newest, and top volume tokens from DexScreener. Auto-refreshes every 30 seconds.</p>
+            <div class="mini-pills">
+              <span class="mini-pill active">Trending</span>
+              <span class="mini-pill dim">Newest</span>
+              <span class="mini-pill dim">Volume</span>
+            </div>
+          </div>
+
+          <!-- Airdrop Tracker -->
+          <div class="bento-card reveal reveal-delay-2">
+            <div class="bento-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><polyline points="12 3 12 15"/><polyline points="8 7 12 3 16 7"/></svg>
+            </div>
+            <h3>Airdrop Tracker</h3>
+            <p>Track eligibility criteria across protocols. Never miss a Solana airdrop again.</p>
+            <div class="mini-progress">
+              <div class="mini-progress-bar"><div class="mini-progress-fill"></div></div>
+              <div class="mini-progress-label">4 / 7 protocols qualified</div>
+            </div>
+          </div>
+
+          <!-- Portfolio & PnL -->
+          <div class="bento-card reveal reveal-delay-3">
+            <div class="bento-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+            <h3>Portfolio &amp; PnL</h3>
+            <p>See your full token holdings with real-time prices and profit/loss tracking.</p>
+            <div class="mini-balance">
+              <div class="mini-usd">$1,234.56</div>
+              <div class="mini-pnl">+12.3% all time</div>
+            </div>
+          </div>
+
+          <!-- Token Scanner -->
+          <div class="bento-card reveal reveal-delay-4">
+            <div class="bento-icon">
+              <svg viewBox="0 0 24 24"><path d="M2 12h4"/><path d="M18 12h4"/><path d="M12 2v4"/><path d="M12 18v4"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <h3>Token Scanner</h3>
+            <p>On-chain safety analysis: mint authority, freeze authority, holder concentration, token age.</p>
+            <div class="mini-score">
+              <div class="score-circle">87</div>
+              <div>
+                <div class="score-detail">Safe</div>
+                <div class="score-label">No freeze authority &middot; Low concentration</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== How It Works ===== -->
+    <section id="how-it-works">
+      <div class="container">
+        <div class="section-label centered reveal">How It Works</div>
+        <h2 class="section-title centered reveal">Up and running in minutes</h2>
+        <p class="section-desc centered reveal">No sign-up. No email. Just download and connect.</p>
+
+        <div class="steps">
+          <div class="step reveal">
+            <div class="step-num">1</div>
+            <h3>Download</h3>
+            <p>Get Vigil from the Solana dApp Store or download the APK directly.</p>
+          </div>
+          <div class="step reveal reveal-delay-1">
+            <div class="step-num">2</div>
+            <h3>Connect Wallet</h3>
+            <p>Tap to connect your Solana wallet. Supports Seed Vault, Phantom, Solflare, and more.</p>
+          </div>
+          <div class="step reveal reveal-delay-2">
+            <div class="step-num">3</div>
+            <h3>Start Tracking</h3>
+            <p>Watch wallets, track airdrops, scan tokens, and view your portfolio instantly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Security & Trust ===== -->
+    <section id="security">
+      <div class="container">
+        <div class="section-label reveal">Security &amp; Trust</div>
+        <h2 class="section-title reveal">Your keys, your crypto</h2>
+        <p class="section-desc reveal">Vigil never touches your private keys. Every security decision favors you.</p>
+
+        <div class="trust-grid">
+          <div class="trust-card reveal">
+            <h3>Non-Custodial</h3>
+            <p>We never have access to your private keys or seed phrase. All transactions are signed in your wallet app via Mobile Wallet Adapter.</p>
+          </div>
+          <div class="trust-card reveal reveal-delay-1">
+            <h3>No Personal Data</h3>
+            <p>No email, no name, no phone number. Anonymous authentication means we never know who you are.</p>
+          </div>
+          <div class="trust-card reveal reveal-delay-2">
+            <h3>API Proxying</h3>
+            <p>All third-party API calls are proxied through our backend. Your device IP is never shared with Helius, Jupiter, or DexScreener.</p>
+          </div>
+          <div class="trust-card reveal reveal-delay-3">
+            <h3>Rate Limited &amp; Secured</h3>
+            <p>Every endpoint is rate-limited. Database access uses Row Level Security. API keys are server-side only.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section id="faq">
+      <div class="container">
+        <div class="section-label centered reveal">FAQ</div>
+        <h2 class="section-title centered reveal">Common questions</h2>
+        <p class="section-desc centered reveal">Everything you need to know about Vigil.</p>
+
+        <div class="faq-list">
+          <details class="reveal">
+            <summary>Is Vigil free to use?</summary>
+            <div class="faq-body">Yes. Vigil is free to download and use. The only fee is a 1% platform fee on token swaps executed through the app. All other features &mdash; wallet watching, token feed, scanner, portfolio &mdash; are completely free.</div>
+          </details>
+          <details class="reveal reveal-delay-1">
+            <summary>Does Vigil have access to my private keys?</summary>
+            <div class="faq-body">No. Vigil is fully non-custodial. All transactions are signed by your external wallet (Seed Vault, Phantom, Solflare) using the Solana Mobile Wallet Adapter protocol. We never see or store your private keys.</div>
+          </details>
+          <details class="reveal reveal-delay-2">
+            <summary>What devices does Vigil support?</summary>
+            <div class="faq-body">Vigil is currently Android-only, optimized for the Solana Seeker device. It works on any Android device that supports Solana Mobile Wallet Adapter.</div>
+          </details>
+          <details class="reveal reveal-delay-3">
+            <summary>Do I need to create an account?</summary>
+            <div class="faq-body">No. Vigil uses anonymous authentication. A random session token is generated on your device &mdash; no email, password, or personal info is ever collected.</div>
+          </details>
+          <details class="reveal reveal-delay-4">
+            <summary>How does the token scanner work?</summary>
+            <div class="faq-body">The scanner performs on-chain analysis of token contracts, checking mint authority, freeze authority, holder concentration, and token age. Results are cached for 5 minutes and displayed as a safety score from 0&ndash;100.</div>
+          </details>
+          <details class="reveal">
+            <summary>What data does Vigil collect?</summary>
+            <div class="faq-body">Only an anonymous device ID (for rate limiting) and the wallet addresses you choose to watch. No personal info, no analytics SDKs, no tracking. See our <a href="#privacy">Privacy Policy</a> for full details.</div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Download CTA ===== -->
+    <section class="cta-section" id="download">
+      <div class="container">
+        <div class="cta-card reveal">
+          <h2>Ready to start watching?</h2>
+          <p>Join Vigil and take control of your Solana experience.</p>
+          <div class="hero-ctas">
+            <a href="#" class="btn btn-primary">Get on Solana dApp Store</a>
+            <a href="#" class="btn btn-outline">Download APK</a>
+          </div>
+          <p class="cta-note">Android only. Optimized for Solana Seeker.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Privacy Policy ===== -->
+    <section class="legal-section" id="privacy">
+      <div class="container">
+        <div class="legal-inner">
+          <h2>Privacy Policy</h2>
+          <p class="legal-effective">Effective Date: March 1, 2026 &nbsp;|&nbsp; Last Updated: March 1, 2026</p>
+
+          <p>Vigil ("we," "us," or "our") is a mobile application operated from South Carolina, United States. This Privacy Policy explains what information we collect, how we use it, and your rights regarding that information.</p>
+
+          <h3>1. Information We Collect</h3>
+          <div class="legal-badge">Minimal by Design</div>
+          <p>Vigil is designed to collect as little data as possible. We do <strong>not</strong> collect your name, email address, phone number, or any personal identification documents.</p>
+
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Purpose</th><th>Stored Where</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Anonymous device ID</td>
+                <td>Rate limiting, abuse prevention</td>
+                <td>Supabase (cloud database)</td>
+              </tr>
+              <tr>
+                <td>Watched wallet addresses</td>
+                <td>Whale alert feature &mdash; shared cache for all users watching the same address</td>
+                <td>Supabase (cloud database)</td>
+              </tr>
+              <tr>
+                <td>Slippage preference</td>
+                <td>Swap configuration</td>
+                <td>On-device only (AsyncStorage)</td>
+              </tr>
+              <tr>
+                <td>Connected wallet public address</td>
+                <td>Fetch on-chain balances, portfolio data, transaction history</td>
+                <td>On-device only (memory)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>We use <strong>anonymous authentication</strong> (Supabase Auth) &mdash; no email or password is required. A random session token is generated on your device to authorize API requests.</p>
+
+          <h3>2. Information We Do NOT Collect</h3>
+          <ul>
+            <li>Private keys, seed phrases, or wallet passwords</li>
+            <li>Personal identity information (name, email, phone, address)</li>
+            <li>Location data or GPS coordinates</li>
+            <li>Contacts, photos, or device files</li>
+            <li>Browsing history or activity outside the app</li>
+            <li>Advertising identifiers or analytics/tracking SDKs</li>
+          </ul>
+
+          <h3>3. Non-Custodial Architecture</h3>
+          <p>Vigil is a <strong>non-custodial</strong> application. We never have access to your private keys or the ability to move your funds. All transactions are signed locally in your wallet app (such as Seed Vault, Phantom, or Solflare) via the Solana Mobile Wallet Adapter protocol. We cannot initiate, approve, or reverse any blockchain transaction on your behalf.</p>
+
+          <h3>4. Third-Party Services</h3>
+          <p>Vigil uses the following third-party services to provide functionality. API calls to these services are proxied through our backend servers &mdash; your device IP address is not shared directly with them.</p>
+
+          <table>
+            <thead>
+              <tr><th>Service</th><th>Purpose</th><th>Data Shared</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Helius</td>
+                <td>Solana RPC, transaction data, token information</td>
+                <td>Wallet public addresses, transaction signatures</td>
+              </tr>
+              <tr>
+                <td>Jupiter</td>
+                <td>Swap routing and execution</td>
+                <td>Token mints, amounts for swap quotes</td>
+              </tr>
+              <tr>
+                <td>DexScreener</td>
+                <td>Token prices, market data, feed content</td>
+                <td>Token mint addresses</td>
+              </tr>
+              <tr>
+                <td>Supabase</td>
+                <td>Authentication, database, edge functions</td>
+                <td>Anonymous device ID, watched wallet addresses</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>Each third-party service has its own privacy policy. We encourage you to review them:</p>
+          <ul>
+            <li>Helius: <a href="https://www.helius.dev/privacy-policy">helius.dev/privacy-policy</a></li>
+            <li>Jupiter: <a href="https://jup.ag/tos">jup.ag/tos</a></li>
+            <li>DexScreener: <a href="https://dexscreener.com/privacy">dexscreener.com/privacy</a></li>
+            <li>Supabase: <a href="https://supabase.com/privacy">supabase.com/privacy</a></li>
+          </ul>
+
+          <h3>5. Data Retention</h3>
+          <ul>
+            <li><strong>Watched wallet data</strong> is retained in the shared cache as long as at least one user is watching that address. When all users remove a wallet, it is deleted.</li>
+            <li><strong>Anonymous device IDs</strong> are retained for rate-limiting purposes and have no personally identifiable information linked to them.</li>
+            <li><strong>Cached market data</strong> (token prices, feed data, scan results) is refreshed frequently and old entries are overwritten automatically.</li>
+          </ul>
+
+          <h3>6. Data Security</h3>
+          <p>We implement the following security measures:</p>
+          <ul>
+            <li>All API communications use HTTPS/TLS encryption</li>
+            <li>API keys are stored server-side and never exposed to client devices</li>
+            <li>RPC calls are proxied through authenticated edge functions with method whitelisting</li>
+            <li>Rate limiting is applied to all endpoints to prevent abuse</li>
+            <li>Database access is restricted via Row Level Security (RLS) policies</li>
+          </ul>
+
+          <h3>7. Children's Privacy</h3>
+          <p>Vigil is not directed at individuals under the age of 18. We do not knowingly collect information from minors. If you believe a minor has provided data through the app, please contact us and we will delete it.</p>
+
+          <h3>8. Your Rights</h3>
+          <p>Since we collect minimal, non-personal data, most traditional data rights (access, correction, deletion of personal data) do not apply in a meaningful way. However:</p>
+          <ul>
+            <li>You can <strong>remove watched wallets</strong> at any time within the app, which decrements the shared reference count and may trigger deletion.</li>
+            <li>You can <strong>disconnect your wallet</strong> at any time &mdash; we retain no record of the connection.</li>
+            <li>You can <strong>uninstall the app</strong> to remove all locally stored preferences and session data.</li>
+            <li>You can <strong>contact us</strong> to request deletion of any data associated with your anonymous device ID.</li>
+          </ul>
+
+          <h3>9. Changes to This Policy</h3>
+          <p>We may update this Privacy Policy from time to time. Changes will be reflected by updating the "Last Updated" date at the top. Continued use of the app after changes constitutes acceptance of the updated policy. Material changes will be communicated via an in-app notice.</p>
+
+          <div class="legal-contact">
+            <p style="margin-bottom:8px"><strong>Contact</strong></p>
+            <p style="margin-bottom:4px">Email: <a href="mailto:fakemail101@protonmail.com">fakemail101@protonmail</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Terms of Service ===== -->
+    <section class="legal-section" id="terms">
+      <div class="container">
+        <div class="legal-inner">
+          <h2>Terms of Service</h2>
+          <p class="legal-effective">Effective Date: March 1, 2026 &nbsp;|&nbsp; Last Updated: March 1, 2026</p>
+
+          <p>These Terms of Service ("Terms") govern your use of the Vigil mobile application ("App," "Service") operated from South Carolina, United States. By using Vigil, you agree to these Terms. If you do not agree, do not use the App.</p>
+
+          <h3>1. Description of Service</h3>
+          <p>Vigil is a non-custodial Solana blockchain tool that provides:</p>
+          <ul>
+            <li><strong>Wallet watching</strong> &mdash; monitor activity on public Solana wallet addresses</li>
+            <li><strong>Token feed</strong> &mdash; view trending and recently listed tokens</li>
+            <li><strong>Token scanner</strong> &mdash; on-chain safety analysis of token contracts</li>
+            <li><strong>Portfolio tracker</strong> &mdash; view your token holdings and profit/loss</li>
+            <li><strong>Token swaps</strong> &mdash; execute token swaps via Jupiter aggregator</li>
+          </ul>
+          <p>Vigil is a software tool that interfaces with the Solana blockchain and third-party services. We do not operate an exchange, brokerage, or financial advisory service.</p>
+
+          <h3>2. Eligibility</h3>
+          <ul>
+            <li>You must be at least 18 years old to use Vigil.</li>
+            <li>You must comply with all applicable laws in your jurisdiction, including any laws relating to cryptocurrency.</li>
+            <li>You are solely responsible for determining whether your use of Vigil complies with local regulations.</li>
+            <li>By using the App, you represent that you are not located in a jurisdiction where cryptocurrency transactions are prohibited.</li>
+          </ul>
+
+          <h3>3. Non-Custodial Nature</h3>
+          <div class="legal-card">
+            <p><strong>Vigil never has custody of your assets.</strong> All blockchain transactions are constructed by the App and signed by your external wallet application (e.g., Seed Vault, Phantom, Solflare) using the Solana Mobile Wallet Adapter protocol. You maintain sole control of your private keys and funds at all times. We cannot freeze, reverse, or recover any transaction.</p>
+          </div>
+
+          <h3>4. Platform Fee</h3>
+          <p>Vigil charges a <strong>1% platform fee</strong> (100 basis points) on token swaps executed through the App.</p>
+          <ul>
+            <li>The fee is deducted from the swap output amount.</li>
+            <li>The fee is collected in the output token and sent to the Vigil fee wallet.</li>
+            <li>The fee transfer is included in the same atomic transaction as the swap &mdash; if the swap fails, no fee is collected.</li>
+            <li>The fee amount is displayed in the swap interface before you confirm each trade.</li>
+            <li>Network fees (Solana transaction fees) are separate and paid directly to the Solana network.</li>
+          </ul>
+          <p>We reserve the right to modify the fee rate. Any changes will be reflected in the App before you confirm a swap.</p>
+
+          <h3>5. No Financial Advice</h3>
+          <div class="legal-card">
+            <p><strong>Nothing in Vigil constitutes financial, investment, legal, or tax advice.</strong> Token safety scores, portfolio profit/loss calculations, market data, and trending feeds are provided for informational purposes only. They do not represent recommendations to buy, sell, or hold any token. You are solely responsible for your trading decisions.</p>
+          </div>
+
+          <h3>6. Assumption of Risk</h3>
+          <p>By using Vigil, you acknowledge and accept the following risks:</p>
+          <ul>
+            <li><strong>Market risk</strong> &mdash; Cryptocurrency prices are volatile. You may lose some or all of your investment.</li>
+            <li><strong>Smart contract risk</strong> &mdash; Tokens and DeFi protocols may contain bugs or be exploited. Token scanner results are informational and do not guarantee safety.</li>
+            <li><strong>Blockchain risk</strong> &mdash; Transactions on the Solana blockchain are irreversible. Failed or stuck transactions may result in loss of funds or network fees.</li>
+            <li><strong>Slippage risk</strong> &mdash; Actual swap prices may differ from quoted prices due to market movement between quote and execution.</li>
+            <li><strong>Third-party risk</strong> &mdash; Vigil relies on third-party services (Jupiter, Helius, DexScreener) that may experience downtime, errors, or provide inaccurate data.</li>
+            <li><strong>Regulatory risk</strong> &mdash; Laws governing cryptocurrency may change. You are responsible for compliance with applicable regulations.</li>
+          </ul>
+
+          <h3>7. Prohibited Uses</h3>
+          <p>You agree not to use Vigil to:</p>
+          <ul>
+            <li>Violate any applicable law or regulation</li>
+            <li>Engage in money laundering, terrorist financing, or sanctions evasion</li>
+            <li>Abuse, exploit, or circumvent rate limits or security measures</li>
+            <li>Reverse engineer, decompile, or extract source code from the App</li>
+            <li>Use automated systems (bots, scrapers) to interact with the App in excess</li>
+            <li>Interfere with the App's operation or other users' access</li>
+          </ul>
+
+          <h3>8. Intellectual Property</h3>
+          <p>The Vigil name, logo, and App design are owned by us. You may not use our branding without written permission. Blockchain data displayed in the App is public information. Third-party trademarks (Solana, Jupiter, etc.) belong to their respective owners.</p>
+
+          <h3>9. Disclaimer of Warranties</h3>
+          <div class="legal-card">
+            <p>VIGIL IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE APP WILL BE UNINTERRUPTED, ERROR-FREE, SECURE, OR FREE OF VIRUSES OR HARMFUL COMPONENTS. WE DO NOT WARRANT THE ACCURACY, COMPLETENESS, OR RELIABILITY OF ANY DATA DISPLAYED IN THE APP, INCLUDING TOKEN PRICES, SAFETY SCORES, AND TRANSACTION HISTORY.</p>
+          </div>
+
+          <h3>10. Limitation of Liability</h3>
+          <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL VIGIL, ITS OPERATORS, AFFILIATES, OR CONTRIBUTORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, DATA, USE, OR GOODWILL, ARISING OUT OF OR RELATED TO YOUR USE OF THE APP, WHETHER BASED ON WARRANTY, CONTRACT, TORT, OR ANY OTHER LEGAL THEORY, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p>
+          <p>OUR TOTAL LIABILITY FOR ANY CLAIM ARISING FROM YOUR USE OF THE APP SHALL NOT EXCEED THE TOTAL PLATFORM FEES YOU HAVE PAID TO US IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM, OR FIFTY DOLLARS ($50 USD), WHICHEVER IS GREATER.</p>
+
+          <h3>11. Indemnification</h3>
+          <p>You agree to indemnify and hold harmless Vigil, its operators, and affiliates from any claims, damages, losses, or expenses (including reasonable attorney's fees) arising from your use of the App, your violation of these Terms, or your violation of any applicable law.</p>
+
+          <h3>12. Modifications</h3>
+          <p>We reserve the right to modify, suspend, or discontinue Vigil (or any part of it) at any time without notice. We may update these Terms from time to time. Changes are effective when posted. Continued use after changes constitutes acceptance. Material changes will be communicated via an in-app notice.</p>
+
+          <h3>13. Governing Law &amp; Dispute Resolution</h3>
+          <p>These Terms are governed by the laws of the State of South Carolina, United States, without regard to conflict of law principles.</p>
+          <p>Any dispute arising from these Terms or your use of the App shall first be attempted to be resolved through informal negotiation by contacting us. If the dispute cannot be resolved informally within thirty (30) days, it shall be resolved through binding arbitration administered in accordance with the rules of the American Arbitration Association, conducted in South Carolina. You agree that any arbitration shall be conducted on an individual basis and not as a class, consolidated, or representative action.</p>
+
+          <h3>14. Severability</h3>
+          <p>If any provision of these Terms is found to be unenforceable, the remaining provisions shall remain in full force and effect.</p>
+
+          <h3>15. Entire Agreement</h3>
+          <p>These Terms, together with the Privacy Policy, constitute the entire agreement between you and Vigil regarding your use of the App.</p>
+
+          <div class="legal-contact">
+            <p style="margin-bottom:8px"><strong>Contact</strong></p>
+            <p style="margin-bottom:4px">Email: <a href="mailto:fakemail101@protonmail">fakemail101@protonmail</a></p>
+            <p style="color:var(--text-tertiary);font-size:12px;margin-top:12px">For data deletion requests, questions about these policies, or any other inquiries, please reach out via email.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo" aria-label="Vigil home">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="15" stroke="#9945FF" stroke-width="1.5"/>
+              <ellipse cx="16" cy="16" rx="10" ry="6" stroke="#9945FF" stroke-width="1.5"/>
+              <circle cx="16" cy="16" r="3" fill="#9945FF"/>
+            </svg>
+            Vigil
+          </a>
+          <p>Your Solana command center. Track airdrops, watch whales, scan tokens, and manage your portfolio.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+            <li><a href="mailto:fakemail101@protonmailContact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">&copy; 2026 Vigil. All rights reserved.</span>
+        <span class="footer-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Built on Solana
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== JavaScript (~1KB) ===== -->
+  <script>
+    (function() {
+      // Scroll reveal
+      var reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function(el) { observer.observe(el); });
+      } else {
+        reveals.forEach(function(el) { el.classList.add('visible'); });
+      }
+
+      // Nav scroll
+      var nav = document.querySelector('.nav');
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      }, { passive: true });
+
+      // Mobile menu
+      var hamburger = document.querySelector('.hamburger');
+      var mobileMenu = document.querySelector('.mobile-menu');
+      hamburger.addEventListener('click', function() {
+        var isOpen = mobileMenu.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', isOpen);
+      });
+      mobileMenu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          mobileMenu.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
