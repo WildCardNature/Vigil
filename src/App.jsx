@@ -1,13 +1,14 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import marketShot from "../../dappstore_assets/Screenshot_20260908-182216.png";
-import addWalletShot from "../../dappstore_assets/Screenshot_20260908-182615.png";
-import watcherShot from "../../dappstore_assets/Screenshot_20260908-182639.png";
-import settingsShot from "../../dappstore_assets/Screenshot_20260908-185809.png";
 
 const WatchtowerCanvas = lazy(() => import("./WatchtowerCanvas"));
 
 const STORE_DEEP_LINK = "solanadappstore://details?id=com.vigil.mobile";
 const WEB_LISTING_URL = "https://seekertracker.com/dapps/com.vigil.mobile";
+const asset = (name) => `${import.meta.env.BASE_URL}assets/${name}`;
+const marketShot = asset("markets.png");
+const addWalletShot = asset("add-wallet.png");
+const watcherShot = asset("following.png");
+const settingsShot = asset("settings.png");
 const SCREENSHOTS = [marketShot, watcherShot, addWalletShot, settingsShot];
 
 function useReducedMotion() {
